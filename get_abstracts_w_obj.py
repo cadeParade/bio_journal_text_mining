@@ -37,7 +37,7 @@ class Paper(object):
 	def make_sentence_id_tuples(self):
 		list_of_tuples = []
 		for sentence in self.coocurring_sentences:
-			current_tuple = (self.id, sentence, 0)
+			current_tuple = (self.id, sentence)
 			list_of_tuples.append(current_tuple)
 		# print self.coocurring_sentences
 		# print list_of_tuples
@@ -107,7 +107,7 @@ def get_xml(url):
 	return xml
 
 def make_search_url(base_url, q1, q2):
-	max_papers = "&retmax=20"
+	max_papers = "&retmax=10"
 	title_abstract_add = "[tiab]"
 	search_url_add = "esearch.fcgi?db=pubmed&term=%s+AND+%s" %(q1,q2)
 	url = base_url+search_url_add+title_abstract_add + max_papers
@@ -116,25 +116,31 @@ def make_search_url(base_url, q1, q2):
 
 def make_string_of_ids(xml):
 	ids = xml("Id").text()
-	ids = ids = ",".join(shlex.split(ids))
+	ids = ",".join(shlex.split(ids))
 	return ids
 
 def make_fetch_url(base_url, fetch_get_abstracts_add, id_string ):
+	max_papers = "&retmax=10"
 	fetch_url_add = "efetch.fcgi?db=pubmed&id=%s" % id_string
-	full_url = base_url + fetch_url_add + fetch_get_abstracts_add
+	full_url = base_url + fetch_url_add + fetch_get_abstracts_add+max_papers
+	print full_url
 	return full_url
 
 def get_info_from_fetch_xml(xml, id_list):
-	print len(xml), "length of xml"
-	single_docs = xml("PubmedArticle")
-	print len(single_docs), "length of list of articles"
-	id_list = id_list.split(",")	
+	single_docs = list(xml("PubmedArticle"))
+
+	extra = xml("PubmedBookArticle")
+	single_docs.extend(list(extra))
+	
+	id_list = id_list.split(",")
 	title_list = []
 	abstract_list = []
+	
 	for doc in single_docs:
 		doc = pyquery.PyQuery(doc)
 		title_list.append(doc("ArticleTitle").text())
 		abstract_list.append(doc("AbstractText").text())
+	
 	print len(abstract_list), "length of abstract list"
 
 	return_dict = {"id_list" : id_list, "title_list":title_list, "abstract_list":abstract_list}
@@ -168,6 +174,7 @@ def make_paper_objects(dict_of_lists):
 	abstract_list = dict_of_lists["abstract_list"]
 
 	paper_dict = {}
+	#print len(id_list), "id list length"
 	for i, paper_id in enumerate(id_list):
 		paper = Paper()
 		paper.id = id_list[i]
@@ -177,10 +184,53 @@ def make_paper_objects(dict_of_lists):
 
 	return paper_dict
 
+def rank_sentences(list_of_sentences, q1, q2):
+	tokenizer = RegexpTokenizer("\s+", gaps = True)
+	list_of_scored_sentences = []
+	#print len(list_of_sentences), "number of sentences"
+	for sentence_tuple in list_of_sentences:
+		sentence = sentence_tuple[1]
+		#split sentence in to words
+		tokenized_sentence = tokenizer.tokenize(sentence)
+		#label parts of speech, returns list of tuples (word, part of speech)
+		pos_sentence = nltk.pos_tag(tokenized_sentence)
+		score = 0
 
-def make_list_of_all_sentences():
-	pass
-	
+		# STARTS WITH QUERY (OR SYN) FOLLOWED BY VERB?
+		# ____________EDIT THIS WHEN SYNONYMS IMPLEMENTED ___________
+		#
+		#
+		if tokenized_sentence[0] == q1 or tokenized_sentence[0] == [q2]:
+		 	if pos_sentence[1][0] == "V":
+		 		score +=5
+
+		# PRESENCE OF USER INPUTTED KEYWORDS
+		if q1 in sentence or q2 in sentence:
+			score += 5
+		
+		# PRESENCE OF SUGGEST, FOUND, SHOW, DATA
+		good_words = [" suggest ", " found ", " show ", " data "]
+		if any(word in sentence for word in good_words):
+			score += 9
+
+		# PRESENCE OF NOT, LACK, FAIL, WITHOUT
+		bad_words = [" not ", " lack ", " fail ", " without "]
+		if any(word in sentence for word in bad_words):
+			score -=3 
+
+		# TEST SENTENCE LENGTH
+		if len(tokenized_sentence) > 30:
+			score -= 3
+
+		scored_sentence_tuple = (score, sentence_tuple[0], sentence_tuple[1])
+		list_of_scored_sentences.append(scored_sentence_tuple)
+
+	sorted_list_of_scored_sentences = sorted(list_of_scored_sentences, reverse=True)	
+	pruned_sorted_list_of_scored_sentences = sorted_list_of_scored_sentences[0:19]
+	return pruned_sorted_list_of_scored_sentences
+ 	
+
+
 
 def main():
 	q1 = "DAT"
@@ -194,55 +244,12 @@ def main():
 		paper_dict[key].word_tokenize()
 		#paper_dict[key].pos_tagger()
 		#paper_dict[key].shallow_parsing()
-	
+	scored_sentences = rank_sentences(list_of_sentences, q1, q2)
 
-	for sentence_tuple in list_of_sentences:
-		sentence = sentence_tuple[1]
-		sentence_words = sentence.split()
-		print sentence_words
-		score = 0
-
-
-
-		# PRESENCE OF SUGGEST, FOUND, SHOW, DATA
-		good_words = ["suggest", "found", "show", "data"]
-		if any(word in sentence for word in good_words):
-			score += 9
-
-		#SENTENCE LENGTH
-		sentence_length = len(re.findall(r'\w+', sentence))
-		if sentence_length > 30:
-			score -= 3
-
-	 	
-		#do the ranking 
-		#if there's a value
-		#for each tuple in the list ("id", "sentence", 'score')
-			# score = 0
-			#current sentence = current_tuple[1]
-			#processing on current sentence
-			# various things happen += score
-
-
-	
 
 
 
 
 main()
-
-
-
-
-
-
-
-
-
-
-
-
-
-
 
 
