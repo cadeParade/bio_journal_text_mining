@@ -1,4 +1,4 @@
-bio_journal_text_mining
+bio journal text mining
 =======================
 
 Final project for Hackbright. Mining meaning and correlations out of journal paper abstracts.
