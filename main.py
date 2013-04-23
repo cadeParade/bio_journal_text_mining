@@ -1,19 +1,19 @@
-import make_syn_dict, get_info_from_xml, rank_sentences, decide_classification
+import make_syn_dict, get_info_from_xml, rank_sentences, decide_classification, query_class_def
 import nltk, pfp, unicodedata, re
 from nltk.tokenize import sent_tokenize, word_tokenize, RegexpTokenizer
 from nltk.tag import pos_tag
 
-class Query(object):
+# class Query(object):
 
-	def __init__(self):
-		self.q1 = None
-		self.q2 = None
+# 	def __init__(self):
+# 		self.q1 = None
+# 		self.q2 = None
 
-	def make_list_of_all_sentences(self):
-		pass
+# 	def make_list_of_all_sentences(self):
+# 		pass
 
-	def pair_sentences_with_paper_id(self):
-		pass
+# 	def pair_sentences_with_paper_id(self):
+# 		pass
 
 
 class Paper(object):
@@ -116,11 +116,24 @@ def get_list_of_all_sentences(paper_dict, q1, q2):
 
 	return list_of_sentences
 
+# def get_syns(q1, q2)
+
+
+
 
 def main():
 	q1 = "DAT"
 	q2 = "ADHD"
+
+
+
+	q1_syns = []
+	q2_syns = []
 	max_num_sents_to_analyze = 23
+	syn_dict_location = "corpus_or_database/chilibot.syno.database"
+
+	query = query_class_def.main(q1, q2, syn_dict_location)
+
 	
 	# retreives info from pubmed
 	dict_of_info = get_info_from_xml.main(q1, q2)

@@ -160,7 +160,7 @@ class Sentence(object):
 					#test for telling words
 					if sentence.stimulatory_words_present == True:
 						sentence.stimulatory = True
-					elif sentence.inhibitory_words_present == True:
+					if sentence.inhibitory_words_present == True:
 						sentence.inhibitory = True
 					else:
 						sentence.neutral = True
