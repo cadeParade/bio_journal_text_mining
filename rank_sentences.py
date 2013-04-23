@@ -26,7 +26,7 @@ def rank_sentences(list_of_sentences, q1, q2, max_sents):
 			score += 5
 		
 		# PRESENCE OF SUGGEST, FOUND, SHOW, DATA
-		good_words = [" suggest ", " found ", " show ", " data "]
+		good_words = [" suggest ", " found ", "provide", " show ", " data ", "conclude", "CONCLUSION"]
 		if any(word in sentence for word in good_words):
 			score += 9
 
@@ -37,10 +37,12 @@ def rank_sentences(list_of_sentences, q1, q2, max_sents):
 
 		# TEST SENTENCE LENGTH
 		if len(tokenized_sentence) > 30:
-			score -= 3
+			score -= 5
+
 
 		scored_sentence_tuple = (score, sentence_tuple[0], sentence_tuple[1])
-		list_of_scored_sentences.append(scored_sentence_tuple)
+		if scored_sentence_tuple[0] > 0:
+			list_of_scored_sentences.append(scored_sentence_tuple)
 
 	sorted_list_of_scored_sentences = sorted(list_of_scored_sentences, reverse=True)
 	#print len(sorted_list_of_scored_sentences)
