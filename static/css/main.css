@@ -1,0 +1,21 @@
+#bigTextArea {
+  width: 500px;
+}
+
+tr.odd {
+	background-color:#f0f8ff;
+}
+
+tr.indel {
+	background-color:#ffe1e1;
+}
+
+.float_right {
+	float: right;
+	padding-right: 30px;
+}
+
+.float_right form {
+	float: right;
+	padding-left: 30px;
+}

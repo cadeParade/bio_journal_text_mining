@@ -1,0 +1,32 @@
+{% extends "layout.html" %}
+
+
+
+{% block style %}
+{% endblock %}
+
+
+{% block body %}
+
+
+
+      <hr>
+
+      <div class="jumbotron">
+      
+        <h1>What are you looking for?</h1>
+        <!-- <p class="lead">type in your search terms just as soon as I get these forms made!</p> -->
+
+        <form action="search_output" method="post">
+          <fieldset>
+            <legend>Enter search terms</legend>
+            <label>Entitiy 1: </label><input type = "text" name = "q1"><br><br>
+            <label>Entitiy 2: </label><input type = "text" name = "q2"><br><br>
+            <input type="submit" class = "btn btn-large btn-success" value="DECIDE RELATIONSHIP!">
+          </fieldset>
+      </div>
+
+      <hr>
+
+{% endblock %}
+

@@ -1,0 +1,65 @@
+{% extends "layout.html" %}
+
+
+
+{% block style %}
+{% endblock %}
+
+
+{% block body %}
+
+      <hr>
+
+      <div class="jumbotron">
+      
+        <h1>These were your search terms!</h1>
+        <p class="lead">They are pretty good search terms</p>
+        <h2>{{ q1 }}</h2>
+        <h2>{{ q2 }}</h2>
+        <br><br>
+
+        <ol>
+          {% for sentence in scored_sentences %}
+            <li>{{sentence}}</li>
+          {% endfor %}
+        </ol>
+
+
+      </div>
+
+      <hr>
+
+<script>
+  // var q1 = {{ q1 }}
+  // var q2 = {{ q2 }}
+  // console.log(q1)
+  // console.log(q2)
+  $("li").highlightq1("MAOA");
+  $("li").highlightq2("ADHD");
+
+  // $("li").highlight-q2(q2);
+  // console.log("hello")
+  // var sentence_list = $("li")
+  // console.log(sentence_list)
+  // for (var i = 0; i < sentence_list.length; i++) {
+  //   var sentence = $(sentence_list[i]);
+  //   console.log(sentence.text());
+  //   // var thumbnailImg = $("<img>");
+  //   // thumbnailImg.attr("src", thumbnailUrl);
+  //   // videoLink.append(thumbnailImg);
+  // }
+</script>
+
+
+
+
+
+
+
+
+
+
+{% endblock %}
+
+
+
