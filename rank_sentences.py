@@ -1,8 +1,9 @@
 from nltk.tokenize import sent_tokenize, word_tokenize, RegexpTokenizer
 from nltk.tag import pos_tag
 import nltk
+import make_list_of_words
 
-def rank_sentences(list_of_sentences, q1, q2, max_sents):
+def rank_sentences(list_of_sentences, query, max_sents):
 	tokenizer = RegexpTokenizer("\s+", gaps = True)
 	list_of_scored_sentences = []
 	for sentence_tuple in list_of_sentences:
@@ -17,16 +18,17 @@ def rank_sentences(list_of_sentences, q1, q2, max_sents):
 		# ____________EDIT THIS WHEN SYNONYMS IMPLEMENTED ___________
 		#
 		#
-		if tokenized_sentence[0] == q1 or tokenized_sentence[0] == [q2]:
+		if tokenized_sentence[0] == query.q1 or tokenized_sentence[0] == query.q2:
 		 	if pos_sentence[1][0] == "V":
 		 		score +=5
 
 		# PRESENCE OF USER INPUTTED KEYWORDS
-		if q1 in sentence or q2 in sentence:
+		if query.q1 in sentence or query.q2 in sentence:
 			score += 5
 		
 		# PRESENCE OF SUGGEST, FOUND, SHOW, DATA
-		good_words = [" suggest ", " found ", "provide", " show ", " data ", "conclude", "CONCLUSION"]
+		good_words = make_list_of_words.make_list_of_syns("word_lists/conclusive_words.txt")
+		# good_words = [" suggest ", " found ", "provide", " show ", " data ", "conclude", "CONCLUSION"]
 		if any(word in sentence for word in good_words):
 			score += 9
 
@@ -38,10 +40,10 @@ def rank_sentences(list_of_sentences, q1, q2, max_sents):
 		# TEST SENTENCE LENGTH
 		if len(tokenized_sentence) > 30:
 			score -= 5
+			
 
-
-		scored_sentence_tuple = (score, sentence_tuple[0], sentence_tuple[1])
-		if scored_sentence_tuple[0] > 0:
+		scored_sentence_tuple = (score, sentence_tuple[0], sentence_tuple[1], sentence_tuple[2])
+		if scored_sentence_tuple[0] > 0 and len(tokenized_sentence)<30:
 			list_of_scored_sentences.append(scored_sentence_tuple)
 
 	sorted_list_of_scored_sentences = sorted(list_of_scored_sentences, reverse=True)

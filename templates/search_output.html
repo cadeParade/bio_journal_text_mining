@@ -7,22 +7,64 @@
 
 
 {% block body %}
-
-      <hr>
-
+      
       <div class="jumbotron">
       
-        <h1>These were your search terms!</h1>
-        <p class="lead">They are pretty good search terms</p>
-        <h2>{{ q1 }}</h2>
-        <h2>{{ q2 }}</h2>
+        <h1>Here are some papers that had your search terms</h1>
+        <p class="lead">These were your search terms</p>
+        <h2><div id = "q1">{{ q1 }}</div> and <div id = "q2">{{ q2 }}</div></h2>
         <br><br>
+      </div>
+      
+<!-- 
+      <div class = "row-fluid" >
+      
+        <div class = "span6">
+          <p class="lead"> Interactive sentences </p>
+          <ul>
+            {% for item in interactive_list %}
+            <li><b><a href = "http://www.ncbi.nlm.nih.gov/pubmed?term={{item[0]}}">{{ item[1] }} </a></b>
+              <ul>
+               {% for sentence in item[2] %} 
+                <li> <b>{{ sentence[1] }}</b><br>
+                  {{ sentence[0] }}</li>
+               {% endfor %}
+              </ul>
+            {% endfor %}
+          </ul>
+        </div>
+        
+        <div class = "span6">
+           <p class="lead"> Non-interactive sentences </p>
+          <ul>
+            {% for item in noninteractive_list %}
+            <li><b><a href = "http://www.ncbi.nlm.nih.gov/pubmed?term={{item[0]}}">{{ item[1] }} </a></b>
+              <ul>
+               {% for sentence in item[2] %} 
+                <li> <b>{{ sentence[1] }}</b><br>
+                  {{ sentence[0] }}</li>
+               {% endfor %}
+              </ul>
+            {% endfor %}
+          </ul> 
+        </div>
+      
+      </div>
+ -->
 
-        <ol>
-          {% for sentence in scored_sentences %}
-            <li>{{sentence}}</li>
+
+          <div>
+        <ul>
+          {% for item in display_items %}
+          <li><b><a href = "http://www.ncbi.nlm.nih.gov/pubmed?term={{item[0]}}">{{ item[1] }} </a></b>
+            <ul>
+            {% for sentence in item[2] %} 
+            <li> <b>{{ sentence[1] }}</b><br>
+              {{ sentence[0] }}</li>
+             {% endfor %}
+           </ul>
           {% endfor %}
-        </ol>
+        </ul>
 
 
       </div>
@@ -30,24 +72,9 @@
       <hr>
 
 <script>
-  // var q1 = {{ q1 }}
-  // var q2 = {{ q2 }}
-  // console.log(q1)
-  // console.log(q2)
-  $("li").highlightq1("MAOA");
-  $("li").highlightq2("ADHD");
-
-  // $("li").highlight-q2(q2);
-  // console.log("hello")
-  // var sentence_list = $("li")
-  // console.log(sentence_list)
-  // for (var i = 0; i < sentence_list.length; i++) {
-  //   var sentence = $(sentence_list[i]);
-  //   console.log(sentence.text());
-  //   // var thumbnailImg = $("<img>");
-  //   // thumbnailImg.attr("src", thumbnailUrl);
-  //   // videoLink.append(thumbnailImg);
-  // }
+  // highlights search terms
+  $("li").highlightq1($("#q1").text());
+  $("li").highlightq2($("#q2").text());
 </script>
 
 

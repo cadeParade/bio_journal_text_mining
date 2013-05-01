@@ -2,65 +2,60 @@ import make_syn_dict, get_info_from_xml, rank_sentences, decide_classification, 
 import nltk, pfp, unicodedata, re
 from nltk.tokenize import sent_tokenize, word_tokenize, RegexpTokenizer
 from nltk.tag import pos_tag
-
-# class Query(object):
-
-# 	def __init__(self):
-# 		self.q1 = None
-# 		self.q2 = None
-
-# 	def make_list_of_all_sentences(self):
-# 		pass
-
-# 	def pair_sentences_with_paper_id(self):
-# 		pass
-
+import do_something_with_the_database
 
 class Paper(object):
 
 	def __init__(self):
 		self.id = None
 		self.parsed = None
+		self.title = None
+		self.authors = None
+		self.mesh_terms = None
 		self.abstract = None
 		self.all_sentences = None
+		#classified sentences is a list of sentence objects
+		self.classified_sentences = []
 		self.word_tokenized = None
+		#list of tuples (sentence, pos in abstract)
 		self.coocurring_sentences = None
+		#list of tuples (sentence, pos in abstract)
 		self.non_interactive_sents = None
 
-	def make_sentence_id_tuples(self):
+	def make_sentence_id_tuples(self, coocurring_sentences):
 		""" makes list of tuples of sentences in format
-			(paper_id, sentence) """
+			(paper_id, sentence, order in absract) """
 		list_of_tuples = []
-		for sentence in self.coocurring_sentences:
-			current_tuple = (self.id, sentence)
+		for sentence in coocurring_sentences:
+			current_tuple = (self.id, sentence[0], sentence[1])
 			list_of_tuples.append(current_tuple)
 		return list_of_tuples
 
 
-	def split_abstract_into_sentences(self, q1, q2):
+	def split_abstract_into_sentences(self, query):
 		""" splits abstracts on periods and discards any 
 			sentence where both queries do not appear """
 		sentence_list = []
 		sentence_list.append(self.title)
-		abstract_sentence_split = self.abstract.split(".")
-		sentence_list.extend(abstract_sentence_split)
+		if self.abstract:
+			abstract_sentence_split = self.abstract.split(".")
+			sentence_list.extend(abstract_sentence_split)
 
 		self.all_sentences = sentence_list
 
-		coocurrence = self.find_sentences_with_both_queries(sentence_list, q1, q2)
-		self.coocurring_sentences = coocurrence
 
-	def find_sentences_with_both_queries(self, sentence_list, q1, q2):
+	def find_sentences_with_both_queries(self, sentence_list, query):
 		"""takes list of sentences, tests if both queries are in each 
 			sentence. If so, keeps, if not, adds to non-interactive list"""
 		coocurrence_list = []
 		non_interactive_list = []
-
-		for sentence in sentence_list:
-			if q1 in sentence and q2 in sentence:
-				coocurrence_list.append(sentence)
-			elif q1 in sentence or q2 in sentence:
-				non_interactive_list.append(sentence)
+		for i, sentence in enumerate(sentence_list):
+			if query.q1 in sentence and query.q2 in sentence:
+				sentence_and_position = (sentence, i)
+				coocurrence_list.append(sentence_and_position)
+			elif query.q1 in sentence or query.q2 in sentence:
+				sentence_and_position = (sentence, i)
+				non_interactive_list.append(sentence_and_position)
 		self.non_interactive_sents = non_interactive_list
 		return coocurrence_list
 
@@ -71,7 +66,7 @@ class Paper(object):
 		if self.coocurring_sentences:
 			self.word_tokenized = []
 			for sentence in self.coocurring_sentences:
-				tokenized_words =  tokenizer.tokenize(sentence)
+				tokenized_words =  tokenizer.tokenize(sentence[0])
 				self.word_tokenized.append(tokenized_words)
 		else:
 			self.word_tokenized = None
@@ -85,70 +80,91 @@ class Paper(object):
 		return unicode_string
 
 
-def make_paper_objects(dict_of_lists):
+def make_paper_objects(dict_of_info):
 	"""takes in dict of info, returns dictionary paper objects like
 		["paper_id#"]: paper object """
-
-	id_list = dict_of_lists["id_list"]
-	title_list = dict_of_lists["title_list"]
-	abstract_list = dict_of_lists["abstract_list"]
-
+	print dict_of_info, "INFOOOOOOOOOOOOOOOOOO DIIIIIIIIIIIIICT"
 	paper_dict = {}
-	for i, paper_id in enumerate(id_list):
-		paper = Paper()
-		paper.id = id_list[i]
-		paper.title = title_list[i]
-		paper.abstract = abstract_list[i]
-		paper_dict[paper_id] = paper
 
+	if "existing_id_list" in dict_of_info: 
+		ids = dict_of_info["existing_id_list"]
+		for pubmed_id in ids:
+			local_paper = do_something_with_the_database.get_paper_info(pubmed_id)
+			paper = Paper()
+			paper.id = local_paper.pubmed_id
+			paper.title = local_paper.title
+			abstract_of_sent_db_obj = do_something_with_the_database.assemble_abstract(paper.id) 
+			paper.all_sentences = []
+			for sentence in abstract_of_sent_db_obj:
+				paper.all_sentences.append(sentence.sentence)
+			paper.authors = local_paper.authors
+			paper_dict[pubmed_id] = paper
+	
+	if "fetched_dict_of_info" in dict_of_info:		
+		fetched_id_list = dict_of_info["fetched_dict_of_info"]["fetched_id_list"]
+		title_list = dict_of_info["fetched_dict_of_info"]["title_list"]
+		abstract_list = dict_of_info["fetched_dict_of_info"]["abstract_list"]
+		authors_list = dict_of_info["fetched_dict_of_info"]["authors_list"]
+
+		for i, paper_id in enumerate(fetched_id_list):
+			paper = Paper()
+			paper.id = fetched_id_list[i]
+			paper.title = title_list[i]
+			paper.abstract = abstract_list[i]
+			paper.authors = authors_list[i]
+			paper_dict[paper_id] = paper
+	
 	return paper_dict
 
 		
-def get_list_of_all_sentences(paper_dict, q1, q2):
+def get_list_of_all_sentences(paper_dict, query):
 	""" populates paper class properties
 	# extracts list of all coocurring sentences """
 	list_of_sentences = []
 	for key in iter(paper_dict):
-		paper_dict[key].split_abstract_into_sentences(q1,q2)
-		sentence_list = paper_dict[key].make_sentence_id_tuples()
-		list_of_sentences.extend(sentence_list)
-		paper_dict[key].word_tokenize()
-
+		if not paper_dict[key].all_sentences:
+			paper_dict[key].split_abstract_into_sentences(query)
+			coocurrence_list = paper_dict[key].find_sentences_with_both_queries(paper_dict[key].all_sentences, query)
+			sentence_list = paper_dict[key].make_sentence_id_tuples(coocurrence_list)
+			list_of_sentences.extend(sentence_list)
+			paper_dict[key].word_tokenize()
+		else: 
+			coocurrence_list = paper_dict[key].find_sentences_with_both_queries(paper_dict[key].all_sentences,query)
+			sentence_list = paper_dict[key].make_sentence_id_tuples(coocurrence_list)
+			list_of_sentences.extend(sentence_list)
+	
 	return list_of_sentences
 
-# def get_syns(q1, q2)
+
+def assign_sentences_back_from_which_they_came(paper_dict, classified_sentence_list):
+	#assigns classified sentences back to paper from which it came
+	for sentence in classified_sentence_list:
+		paper_dict[sentence.paper_id].classified_sentences.append(sentence)
+		
+		
+	for key in paper_dict.iterkeys():
+		for sentence in classified_sentence_list:
+			if sentence.paper_id == key:
+				paper_dict[key].classified_sentences.append(sentence)
 
 
 
 
-def main():
-	q1 = "DAT"
-	q2 = "ADHD"
+def main(query):
+	# q1 = "DAT"
+	# q2 = "ADHD"
 
+	# max_num_sents_to_analyze = 23
+	max_num_articles_to_get = 10
+	# syn_dict_location = "corpus_or_database/chilibot.syno.database"
 
-
-	q1_syns = []
-	q2_syns = []
-	max_num_sents_to_analyze = 23
-	syn_dict_location = "corpus_or_database/chilibot.syno.database"
-
-	query = query_class_def.main(q1, q2, syn_dict_location)
-
-	
 	# retreives info from pubmed
-	dict_of_info = get_info_from_xml.main(q1, q2)
+	dict_of_info = get_info_from_xml.main(query, max_num_articles_to_get)
 	# puts papers into objects
 	paper_dict = make_paper_objects(dict_of_info)
-	# makes list of all coocurring sentences
-	list_of_sentences = get_list_of_all_sentences(paper_dict, q1, q2)
-	# ranks sentences and takes top x # (last parameter)
-	scored_sentences = rank_sentences.rank_sentences(list_of_sentences, q1,q2, 
-													 max_num_sents_to_analyze)
-	# THIS IS A BIG DEAL YOU GUYS
-	decide_classification.main(scored_sentences, q1, q2)
+	print paper_dict, "PAPER DICCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCT"
 
+	return paper_dict
 
-
-main()
 
 

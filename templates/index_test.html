@@ -16,17 +16,26 @@
       
         <h1>What are you looking for?</h1>
         <!-- <p class="lead">type in your search terms just as soon as I get these forms made!</p> -->
-
-        <form action="/" method="post">
+        <p> lololol this is a test</p>
+        <form action="search_output" method="post">
           <fieldset>
             <legend>Enter search terms</legend>
             <label>Entitiy 1: </label><input type = "text" name = "q1"><br><br>
             <label>Entitiy 2: </label><input type = "text" name = "q2"><br><br>
-            <input type="submit" class = "btn btn-large btn-success" value="DECIDE RELATIONSHIP!">
+            <input type="button" class = "btn btn-large btn-success" value="DECIDE RELATIONSHIP!" onclick = "searchResults()">
           </fieldset>
       </div>
 
-      <hr>
+      <script>
+      function searchResults(){
+        window.location.replace("http://www.google.com")
+      }
+        // $(".btn-large").click(function(){
+        //   alert("handler for .click() called.");
+        //   window.location.replace("http://www.google.com")
+        // });
+      </script>
+
 
 {% endblock %}
 

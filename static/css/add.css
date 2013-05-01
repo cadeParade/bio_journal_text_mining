@@ -1,3 +1,16 @@
+body
+{
+background-image:url('../img/bg.jpg');
+background-repeat:repeat;
+}
+
+.container-narrow {
+    background: #FFFFFF;
+    padding: 50px;
+    margin: 50px, 50px, 50px, 50px;
+}
+
+ul li,
 ol li{
   text-align: left;
   margin:0 20px 20px 0; 
@@ -11,3 +24,9 @@ ol li{
 .highlightq2 {
 	background-color: #FFFF4F;
 }
+
+
+
+
+
+

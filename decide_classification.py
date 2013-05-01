@@ -2,6 +2,9 @@ import pfp
 import unicodedata
 import re
 import nltk
+import make_list_of_words
+import do_something_with_the_database
+
 
 
 """ takes in a list of sentence tuples
@@ -14,6 +17,7 @@ class Sentence(object):
 	def __init__(self):
 		self.paper_id = None
 		self.sentence = None
+		self.order_in_abstract = None
 		
 		self.tree = None
 		
@@ -35,16 +39,24 @@ class Sentence(object):
 		self.parallel = False
 		self.abstract_coocurrence_only = False
 
+		self.overall_classification = None
+		self.general_classification = None
+
 
 	def make_tree(self, sentence):
 		"""Takes a sentence and creates a parse tree with pfp """
-		parsed_sentence = pfp.Parser().parse(sentence)
-		tree = nltk.ImmutableTree.parse(parsed_sentence)
-		#tree.draw()
-		return tree	
+		if do_something_with_the_database.check_for_tree(sentence):
+			print "entered get tree"
+			parsed_sentence = do_something_with_the_database.get_tree(sentence)
+			tree = nltk.ImmutableTree.parse(parsed_sentence)
+			return tree
+		else:
+			parsed_sentence = pfp.Parser().parse(sentence)
+			tree = nltk.ImmutableTree.parse(parsed_sentence)
+			return tree	
 
 
-	def traverse(self, t):
+	def traverse(self, t, query):
 		""" given a parse tree, traverses each node and leaf
 			and makes an ordered list of each entity of interest
 			(query terms, 'S' (notates clauses), and 'VP's (verb phrase)
@@ -54,12 +66,12 @@ class Sentence(object):
 		try:
 			t.node
 		except AttributeError:
-			if "DAT" in t:
+			if query.q1 in t:
 				self.pos_list.append(t)
 				# adds index of this DAT to q1 index list
 				pos_length = len(self.pos_list)
 				self.q1_indexes.append(pos_length-1)
-			elif "ADHD" in t:
+			elif query.q2 in t:
 				self.pos_list.append(t)
 				pos_length = len(self.pos_list)
 				self.q2_indexes.append(pos_length-1)
@@ -77,7 +89,7 @@ class Sentence(object):
 				pos_length = len(self.pos_list)
 				self.vp_indexes.append(pos_length-1)
 			for child in t:
-				self.traverse(child) 
+				self.traverse(child, query) 
 
 
 	def is_pos_between(self, q_index_list, pos_indexes):
@@ -86,7 +98,6 @@ class Sentence(object):
 		is_pos_between_queries = any(pos_idx in range(q_index_list[0], q_index_list[1]) for pos_idx in pos_indexes)
 		return is_pos_between_queries
 	
-
 	def find_the_things(self,q1_indexes, q2_indexes, vp_indexes, s_indexes):
 		"""Labels sentence properties of whether s between or vp between
 			are true or false """ 
@@ -107,13 +118,22 @@ class Sentence(object):
 		print self.pos_list
 		print self.different_clauses, "is s between"
 		print self.vp_between_queries, "is vp between"
-		  
+
+	def make_list_of_syns(self,text_file):
+		word_list = []
+		f = open(text_file)
+		for line in f:
+			line = line.strip()
+			word_list.append(line)
+		return word_list
 
 	def test_for_presence_of_words(self, sentence):
-		stimulatory_words = ["bind", "binds", "additive", "relationship", 
-							 "behavior", "modification", "modify", "modifies"]
-		inhibitory_words = ["inactivate", "abolish", "attenuate", "block", "decrease", "eliminate", 
-							"inhibit", "inhibits", "reduce", "supress", "supresses"]
+		stimulatory_words = make_list_of_words.make_list_of_syns("word_lists/stim_words.txt")
+		inhibitory_words = make_list_of_words.make_list_of_syns("word_lists/inhib_words.txt")
+		# stimulatory_words = ["bind", "binds", "additive", "relationship", 
+							 # "behavior", "modification", "modify", "modifies"]
+		# inhibitory_words = ["inactivate", "abolish", "attenuate", "block", "decrease", "eliminate", 
+		# 					"inhibit", "inhibits", "reduce", "supress", "supresses"]
 		negation_words = [" not ", " no ", " none ", " did not ", " does not "]
 		
 		#booleans
@@ -130,13 +150,11 @@ class Sentence(object):
 		if isinstance(sentence, unicode):
 			sentence = sentence.encode("ascii", "ignore")
 		
-		#takes out restricted (R) sign
-		if "\xc2\xae" in sentence:
-			sentence = sentence.replace("\xc2\xae", "")
-		
-		if "()" in sentence or "( )" in sentence:
-			sentence = sentence.replace("()", "")
-			sentence = sentence.replace("( )", "")
+		forbidden_chars = ["<", ">", "\xc2\xae", "()", "( )"]
+
+		for char in forbidden_chars:
+			if char in sentence:
+				sentence = sentence.replace(char, "")
 		
 		if len(re.findall(r'\w+', sentence)) > 38:
 			sentence = ""
@@ -174,8 +192,28 @@ class Sentence(object):
 			else:
 				sentence.abstract_coocurrence_only = True
 
+	def decide_overall_classification(self, sentence):
+		if sentence.stimulatory == True and sentence.inhibitory == True:
+			sentence.overall_classification = "Stimulatory and inhibitory"
+			sentence.general_classification = "Interactive"
+		elif sentence.stimulatory == True:
+			sentence.overall_classification = "Stimulatory" 
+			sentence.general_classification = "Interactive"
+		elif sentence.inhibitory == True:
+			sentence.overall_classification = "Inhibitory"
+			sentence.general_classification = "Interactive"
+		elif sentence.neutral == True:
+			sentence.overall_classification = "Neutral (interactive but relationship is unclear)"
+			sentence.general_classification = "Interactive"
+		elif sentence.parallel == True: 
+			sentence.overall_classification = "Parallel (queries are in same sentence but unclear if interactive)"
+			sentence.general_classification = "Not Interactive"
+		else:
+			sentence.overall_classification = "Abstract co-occurrence only"
+			sentence.general_classification = "Not Interactive"
 
-def make_sentence_objects(list_of_sentences, q1, q2):
+
+def make_sentence_objects(list_of_sentences, query):
 	"""takes in list of sentences, does some stuff, returns list of populated sentence objects"""
 	# print list_of_sentences
 	sentence_list = []
@@ -187,13 +225,15 @@ def make_sentence_objects(list_of_sentences, q1, q2):
 		sentence_obj = Sentence()
 		sentence_obj.paper_id = sentence[1]
 		sentence_obj.sentence = sentence[2]
+		sentence_obj.order_in_abstract = sentence[3]
 		sentence_obj.sanitize_sentence(sentence_obj.sentence)
 		sentence_obj.tree = sentence_obj.make_tree(sentence_obj.sentence)
-		sentence_obj.traverse(sentence_obj.tree)
+		sentence_obj.traverse(sentence_obj.tree, query)
 		sentence_obj.find_the_things(sentence_obj.q1_indexes, sentence_obj.q2_indexes, 
 									 sentence_obj.vp_indexes, sentence_obj.s_indexes)
 		sentence_obj.test_for_presence_of_words(sentence_obj.sentence)
 		sentence_obj.decision_time(sentence_obj)
+		sentence_obj.decide_overall_classification(sentence_obj)
 
 		sentence_list.append(sentence_obj)
 
@@ -206,15 +246,11 @@ def make_sentence_objects(list_of_sentences, q1, q2):
 		print sentence_obj.neutral, "neutral class"
 		print sentence_obj.parallel, "parallel class"
 		print sentence_obj.abstract_coocurrence_only, "coocurrence only class" 
-
+		print sentence_obj.overall_classification, "OVERAAAAAAAAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLLLLLLLLLL"
 		
 	return sentence_list
 
-
-def main(scored_sentences, q1, q2):
-
-	sentence_list = make_sentence_objects(scored_sentences, q1, q2)
-	print len(sentence_list)
+def count_papers_of_each_type(sentence_list):
 	count_stim = 0
 	count_inhib = 0
 	count_neutral = 0
@@ -238,6 +274,13 @@ def main(scored_sentences, q1, q2):
 	print count_abstract, "abstract"
 
 
+def main(scored_sentences, query):
+
+	sentence_list = make_sentence_objects(scored_sentences, query)
+	print len(sentence_list)
+	count_papers_of_each_type(sentence_list)
+	#sentence list is list of objects
+	return sentence_list
 
 	
 		
