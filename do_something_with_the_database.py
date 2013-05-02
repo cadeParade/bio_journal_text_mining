@@ -22,46 +22,47 @@ import datetime
 #     parsed_sentence = Column(Text)
 
 def paper_exists(pubmed_id):
-	paper_exists = papersdb.session.query(papersdb.Paper).filter_by(pubmed_id=pubmed_id).first()
+	paper_exists = papersdb.session.query(papersdb.Paper) \
+								   .filter_by(pubmed_id=pubmed_id) \
+								   .first()
 	if paper_exists:
-		#check if parsed sentences exist
 		return True
 	else:
 		return False
 
 def get_paper_info(pubmed_id):
 	paper_info_dict = {}
-	current_paper = papersdb.session.query(papersdb.Paper).filter_by(pubmed_id = pubmed_id).first()
+	current_paper = papersdb.session.query(papersdb.Paper) \
+									.filter_by(pubmed_id = pubmed_id) \
+									.first()
 	return current_paper
 
 
 def assemble_abstract(pubmed_id):
-	current_abstract = papersdb.session.query(papersdb.Sentences).filter_by(paper_id =pubmed_id) \
-																 .order_by(asc(papersdb.Sentences.sentence_order)) \
-																 .all()
+	current_abstract = papersdb.session.query(papersdb.Sentences) \
+										.filter_by(paper_id =pubmed_id) \
+										.order_by(asc(papersdb.Sentences.sentence_order)) \
+										.all()
 	#returns list of db objects
 	return current_abstract
 
 
 def check_for_tree(sentence):
-	tree_exists = papersdb.session.query(papersdb.Sentences).filter_by(sentence=sentence).first()
+	tree_exists = papersdb.session.query(papersdb.Sentences) \
+								  .filter_by(sentence=sentence) \
+								  .first()
 	if tree_exists:
 		return True
 	else:
 		return False
 
 def get_tree(sentence):
-	sent = papersdb.session.query(papersdb.Sentences).filter_by(sentence = sentence).first()
+	sent = papersdb.session.query(papersdb.Sentences) \
+						   .filter_by(sentence = sentence) \
+						   .first()
 	tree = sent.parsed_sentence
 	return tree 
 
-def sent_tree_exists(sentence_paper_id, sentence_order):
-	sentences_in_abstract = papersdb.session.query(papersdb.Sentences).filter_by(paper_id=sentence_paper_id).all()
-	import pdb; pdb.set_trace();
-	for sentence in sentences_in_abstract:
-		if sentence.parsed_sentence:
-			pass
-		
 
 def add_new_paper(paper_dict):
 	for key, paper in paper_dict.iteritems():	

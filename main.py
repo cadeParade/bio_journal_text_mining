@@ -83,7 +83,6 @@ class Paper(object):
 def make_paper_objects(dict_of_info):
 	"""takes in dict of info, returns dictionary paper objects like
 		["paper_id#"]: paper object """
-	print dict_of_info, "INFOOOOOOOOOOOOOOOOOO DIIIIIIIIIIIIICT"
 	paper_dict = {}
 
 	if "existing_id_list" in dict_of_info: 
@@ -140,12 +139,6 @@ def assign_sentences_back_from_which_they_came(paper_dict, classified_sentence_l
 	#assigns classified sentences back to paper from which it came
 	for sentence in classified_sentence_list:
 		paper_dict[sentence.paper_id].classified_sentences.append(sentence)
-		
-		
-	for key in paper_dict.iterkeys():
-		for sentence in classified_sentence_list:
-			if sentence.paper_id == key:
-				paper_dict[key].classified_sentences.append(sentence)
 
 
 
@@ -155,14 +148,13 @@ def main(query):
 	# q2 = "ADHD"
 
 	# max_num_sents_to_analyze = 23
-	max_num_articles_to_get = 10
+	max_num_articles_to_get = 100
 	# syn_dict_location = "corpus_or_database/chilibot.syno.database"
 
 	# retreives info from pubmed
 	dict_of_info = get_info_from_xml.main(query, max_num_articles_to_get)
 	# puts papers into objects
 	paper_dict = make_paper_objects(dict_of_info)
-	print paper_dict, "PAPER DICCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCCT"
 
 	return paper_dict
 

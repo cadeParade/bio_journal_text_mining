@@ -130,10 +130,7 @@ class Sentence(object):
 	def test_for_presence_of_words(self, sentence):
 		stimulatory_words = make_list_of_words.make_list_of_syns("word_lists/stim_words.txt")
 		inhibitory_words = make_list_of_words.make_list_of_syns("word_lists/inhib_words.txt")
-		# stimulatory_words = ["bind", "binds", "additive", "relationship", 
-							 # "behavior", "modification", "modify", "modifies"]
-		# inhibitory_words = ["inactivate", "abolish", "attenuate", "block", "decrease", "eliminate", 
-		# 					"inhibit", "inhibits", "reduce", "supress", "supresses"]
+
 		negation_words = [" not ", " no ", " none ", " did not ", " does not "]
 		
 		#booleans
@@ -237,10 +234,6 @@ def make_sentence_objects(list_of_sentences, query):
 
 		sentence_list.append(sentence_obj)
 
-		# print sentence_obj.stimulatory_words_present, "STIM"
-		# print sentence_obj.inhibitory_words_present, "INHIBIT"
-		# print sentence_obj.negation_words_present, "NEGATION" 
-
 		print sentence_obj.stimulatory, "STIm class"
 		print sentence_obj.inhibitory, "inhibitory class"
 		print sentence_obj.neutral, "neutral class"
@@ -272,13 +265,23 @@ def count_papers_of_each_type(sentence_list):
 	print count_neutral, "neutral"
 	print count_parallel, "parallel"
 	print count_abstract, "abstract"
+	class_dict = {"stim": {"count":count_stim, "text": "stimulatory"},
+				  "inhib":{"count":count_inhib, "text":"inhibitory"},
+				  "neutral":{"count":count_neutral, "text": "neutral"},
+				  "parallel": {"count":count_parallel, "text":"parallel"},
+				  "abstract": {"count":count_abstract, "text":"abstract coocurrence only"}
+				  }
+	max_class = max(class_dict.values(), key = lambda x: x["count"])
+				 
+
+	return max_class["text"]
 
 
 def main(scored_sentences, query):
 
 	sentence_list = make_sentence_objects(scored_sentences, query)
 	print len(sentence_list)
-	count_papers_of_each_type(sentence_list)
+	# count_papers_of_each_type(sentence_list)
 	#sentence list is list of objects
 	return sentence_list
 

@@ -10,6 +10,19 @@ background-repeat:repeat;
     margin: 50px, 50px, 50px, 50px;
 }
 
+.inline{
+  display:inline;
+}
+
+#results_subtitle{
+  text-align: center;
+  line-height:70%;
+}
+
+/*h2 h1 {
+  display: inline;
+}
+*/
 ul li,
 ol li{
   text-align: left;
@@ -24,9 +37,3 @@ ol li{
 .highlightq2 {
 	background-color: #FFFF4F;
 }
-
-
-
-
-
-

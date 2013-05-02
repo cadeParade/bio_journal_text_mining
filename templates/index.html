@@ -11,7 +11,8 @@
 
 
       <hr>
-
+       <div id = "results_container">
+      <div class= "box-1">    
       <div class="jumbotron">
       
         <h1>What are you looking for?</h1>
@@ -20,13 +21,36 @@
         <form action="/" method="post">
           <fieldset>
             <legend>Enter search terms</legend>
-            <label>Entitiy 1: </label><input type = "text" name = "q1"><br><br>
-            <label>Entitiy 2: </label><input type = "text" name = "q2"><br><br>
-            <input type="submit" class = "btn btn-large btn-success" value="DECIDE RELATIONSHIP!">
+            <label>Entitiy 1: </label><input type = "text" id = "q1" name = "q1"><br><br>
+            <label>Entitiy 2: </label><input type = "text" id = "q2" name = "q2"><br><br>
+            <input id = "js_listen" type="submit" class = "btn btn-large btn-success" value="DECIDE RELATIONSHIP!">
           </fieldset>
+        </form>
       </div>
-
+     </div>
+     <div id = "syns"></div>
       <hr>
+    </div>
+    <script>
+    $("#js_listen").on("click", function(event){
+      event.preventDefault();
+      var theform = {
+        q1: $("#q1").val(),
+        q2: $("#q2").val()
+      }
+      $.ajax({
+          type: "POST",
+          url: "/",
+          data: theform,
+          success: displayResults
+        });
+    });
+    function displayResults(html){
+      $("#results_container").html(html)
+    }
+    // </script>
+
+
 
 {% endblock %}
 

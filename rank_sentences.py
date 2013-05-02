@@ -47,7 +47,6 @@ def rank_sentences(list_of_sentences, query, max_sents):
 			list_of_scored_sentences.append(scored_sentence_tuple)
 
 	sorted_list_of_scored_sentences = sorted(list_of_scored_sentences, reverse=True)
-	#print len(sorted_list_of_scored_sentences)
 	pruned_sorted_list_of_scored_sentences = sorted_list_of_scored_sentences[0:max_sents]
 	
 	return pruned_sorted_list_of_scored_sentences

@@ -24,15 +24,11 @@ def make_list_of_ids(xml):
 	existing_papers = []
 	papers_to_fetch = []
 	for _id in ids:
-		print _id
 		if do_something_with_the_database.paper_exists(_id): 
 			existing_papers.append(_id)
-			print existing_papers, "EXISTING"
 		else:
 			papers_to_fetch.append(_id)
-			print papers_to_fetch, "GET IT"
 
-	# ids = ",".join(shlex.split(papers_to_fetch))
 	stored_and_not_stored_ids = {"existing_papers":existing_papers, 
 									"papers_to_fetch":papers_to_fetch}
 
@@ -64,7 +60,6 @@ def get_info_from_fetch_xml(xml, ids):
 		for i in doc_list:
 			if i.attrib["idtype"] == "pubmed":
 				id_list.append(i.text)
-				# print i.text
 		authors = doc.find("Author")
 		title_list.append(doc("ArticleTitle").text())
 		abstract_list.append(doc("AbstractText").text())
@@ -101,7 +96,6 @@ def get_relevant_data(query, max_num_articles_to_get):
 
 	fetched_dict_of_info = {}
 	if stored_and_not_stored_ids["papers_to_fetch"]:
-		# print stored_and_not_stored_ids
 		fetch_url = make_fetch_url(base_url, fetch_get_abstracts_add, stored_and_not_stored_ids, max_num_articles_to_get)
 		docs_xml = get_xml(fetch_url)
 	
