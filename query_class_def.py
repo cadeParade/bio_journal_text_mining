@@ -4,10 +4,12 @@ class Query(object):
 	def __init__(self):
 		self.q1 = None
 		self.q1_syns = None		
+		self.q1_syns_checked = None
 		self.q1_search_string = None
 		
 		self.q2 = None
 		self.q2_syns = None
+		self.q2_syns_checked = None
 		self.q2_search_string = None
 
 		syn_dict = None
@@ -43,6 +45,7 @@ class Query(object):
 		return syn_list	
 
 	def make_search_strings(self,q, syn_list):
+		print syn_list
 		string = '"%s"[tiab]' % q
 		if syn_list:
 			string += "+OR+"
@@ -59,7 +62,7 @@ class Query(object):
 
 
 
-def make_query_object(q1, q2, syn_dict_location):
+def make_query_object(q1, q2, syn_dict_location, q1_syns_checked, q2_syns_checked):
 	query = Query()
 	query.syn_dict = query.make_syn_dict(syn_dict_location)
 
@@ -69,21 +72,24 @@ def make_query_object(q1, q2, syn_dict_location):
 	query.q1_syns = query.get_syns(query.q1)
 	query.q2_syns = query.get_syns(query.q2)
 
-	query.q1_search_string = query.make_search_strings(query.q1, query.q1_syns)
-	query.q2_search_string = query.make_search_strings(query.q2, query.q2_syns)
+	query.q1_syns_checked = q1_syns_checked
+	query.q2_syns_checked = q2_syns_checked
+
+	query.q1_search_string = query.make_search_strings(query.q1, query.q1_syns_checked)
+	query.q2_search_string = query.make_search_strings(query.q2, query.q2_syns_checked)
 
 	return query
 
 
 
 
-def main(q1, q2, syn_dict_location):
+def main(q1, q2, syn_dict_location, q1_syns_checked=None, q2_syns_checked=None):
 
-	queries = make_query_object(q1, q2, syn_dict_location)
+	queries = make_query_object(q1, q2, syn_dict_location, q1_syns_checked, q2_syns_checked)
 
-	print queries.q1
-	print queries.q2
-	print queries.q1_syns
+	# print queries.q1
+	# print queries.q2
+	# print queries.q1_syns
 	return queries
 
 	

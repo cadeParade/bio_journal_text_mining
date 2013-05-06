@@ -30,10 +30,51 @@ ol li{
   vertical-align:top;
 }
 
+h1, 
+h2, 
+h3 {
+line-height: 20px;
+}
+
 
 .highlightq1 { 
 	background-color: #BCF54C;
 }
 .highlightq2 {
 	background-color: #FFFF4F;
+}
+
+#whiteout{
+  background-color: #FFFFFF;
+  text-align: center;
+}
+
+.whiteout{
+  background-color: #FFFFFF;
+  text-align: center;
+}
+
+#syndiv{
+  background-color: #FFFFFF;
+}
+
+#syn1_float_left h2,
+#syn2_float_right h2{
+  line-height: 40px;
+}
+
+#syn1_float_left{
+  float:left;
+  width: 350px;
+  text-align: left;
+  background-color: #FFFFFF;
+
+}
+
+#syn2_float_right{
+  float:right;
+  width: 350px;
+  text-align: left;
+  background-color: #FFFFFF;
+
 }

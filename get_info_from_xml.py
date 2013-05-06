@@ -12,8 +12,8 @@ def make_search_url(base_url, query, max_num_articles_to_get):
 	print query.q2_search_string
 	max_papers = "&retmax=%d" % max_num_articles_to_get
 	title_abstract_add = "[tiab]"
-	search_url_add = "esearch.fcgi?db=pubmed&term=(%s)+AND+(%s)" %(query.q1, 
-																   query.q2)
+	search_url_add = "esearch.fcgi?db=pubmed&term=(%s)+AND+(%s)" %(query.q1_search_string, 
+																   query.q2_search_string)
 	url = base_url+search_url_add + max_papers
 	print url
 	return url

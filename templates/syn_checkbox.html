@@ -1,0 +1,25 @@
+<div id="syndiv">
+	<br><br>
+	<p>Please select which synonyms you would like to add to your search</p>
+	<div id="syn1_float_left">
+		<h2>Synonyms for {{ q1 }}.</h2><br>
+		{% if q1_syns %}
+			{% for item in q1_syns %}
+			<input type="checkbox" id = "q1_syns" name = "q1_syns" value="{{ item }}"> {{ item }}</input><br>
+			{% endfor %}
+		{% else %}
+			No synonyms found for {{ q1 }}
+		{% endif %}
+	</div>
+	<div id = "syn2_float_right">
+		<h2>Synonyms for {{ q2 }}.</h2><br>
+		{% if q2_syns %}
+			{% for item in q2_syns %}
+			<input type="checkbox" id = "q2_syns" name = "q2_syns" value="{{ item }}"> {{ item }}</input><br>
+			{% endfor %}
+		{% else %}
+			No synonyms found for {{ q2 }}
+		{% endif %}
+	</div>
+</div>
+

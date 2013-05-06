@@ -19,6 +19,8 @@ def rank_sentences(list_of_sentences, query, max_sents):
 		#
 		#
 		if tokenized_sentence[0] == query.q1 or tokenized_sentence[0] == query.q2:
+		# if tokenized_sentence[0] == any(syn in query.q1_syns for syn in tokenized_sentence ) \
+		#    or tokenized_sentence[0] == any(syn in query.q2_syns for syn in tokenized_sentence ):
 		 	if pos_sentence[1][0] == "V":
 		 		score +=5
 

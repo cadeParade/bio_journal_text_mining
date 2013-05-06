@@ -50,9 +50,14 @@ class Paper(object):
 		coocurrence_list = []
 		non_interactive_list = []
 		for i, sentence in enumerate(sentence_list):
+			print sentence, "SENTENCEEEEEEEEEEE"
+			# if any(syn in query.q1_syns for word in sentence) and \
+			#    any(syn in query.q2_syns for word in sentence):
 			if query.q1 in sentence and query.q2 in sentence:
 				sentence_and_position = (sentence, i)
 				coocurrence_list.append(sentence_and_position)
+			# elif any(syn in query.q1_syns for word in sentence) or \
+			# 	 any(syn in query.q2_syns for word in sentence):
 			elif query.q1 in sentence or query.q2 in sentence:
 				sentence_and_position = (sentence, i)
 				non_interactive_list.append(sentence_and_position)
@@ -123,10 +128,12 @@ def get_list_of_all_sentences(paper_dict, query):
 	for key in iter(paper_dict):
 		if not paper_dict[key].all_sentences:
 			paper_dict[key].split_abstract_into_sentences(query)
+			paper_dict[key].word_tokenize()
+			print paper_dict[key].word_tokenized
 			coocurrence_list = paper_dict[key].find_sentences_with_both_queries(paper_dict[key].all_sentences, query)
 			sentence_list = paper_dict[key].make_sentence_id_tuples(coocurrence_list)
 			list_of_sentences.extend(sentence_list)
-			paper_dict[key].word_tokenize()
+			
 		else: 
 			coocurrence_list = paper_dict[key].find_sentences_with_both_queries(paper_dict[key].all_sentences,query)
 			sentence_list = paper_dict[key].make_sentence_id_tuples(coocurrence_list)

@@ -1,16 +1,19 @@
 
       
       <div class="jumbotron">
-      
-        <h1>Here are some papers that had your search terms</h1>
-       
-      </div>
-      <div id="results_subtitle">
-       <p><span class="lead">This program thinks that</span>
-        <h2 class = "inline">{{ q1 }}</h2> <span class="lead">and</span> <h2 class = "inline">{{ q2 }}</h2><br>
+        <p><h3>This program thinks that</h3>
+        <!-- <p><span class="lead">This program thinks that</span> -->
+        <h2 class = "inline" id="q1">{{ q1 }}</h2><br>
+        <span class="lead">and</span><br>
+        <h2 class = "inline" id="q2">{{ q2 }}</h2><br>
         <span class="lead">have a</span> <br>
         <h2 class="inline">{{ overall_classification }}</h2> <br>
         <span class="lead">relationship.</span></p>
+        
+       
+      </div>
+      <div id="results_subtitle">
+        <p class = "lead">Here are some papers that it looked in:</p>
       </div>
       <br><br>
       <div>

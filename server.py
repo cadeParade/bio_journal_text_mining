@@ -1,5 +1,6 @@
 from flask import Flask, render_template, request, redirect, make_response 
 from jinja2 import Template
+import ast
 import main
 import query_class_def
 import get_info_from_xml
@@ -41,6 +42,19 @@ def format_display_items(paper_dict):
 	#										  "overall class", "general class")])]
 	return display_items
 
+@app.route("/get_syns", methods=["GET","POST"])
+def get_syns():
+	syn_dict_location = "corpus_or_database/chilibot.syno.database"
+		
+	q1 = request.form["q1"]
+	q2 = request.form["q2"]
+
+	query = query_class_def.main(q1, q2, syn_dict_location)
+
+	return render_template("syn_checkbox.html", q1_syns = query.q1_syns, 
+												q2_syns = query.q2_syns,
+												q1 = q1,
+												q2 = q2)
 
 @app.route("/",  methods = ["GET", "POST"])
 def index():
@@ -56,9 +70,20 @@ def index():
 		
 		q1 = request.form["q1"]
 		q2 = request.form["q2"]
+		
+		q1_syns = request.form["q1_syns"]
+		q1_syns_list = ast.literal_eval(q1_syns)
+		q1_syns_list_stripped = [n.strip() for n in q1_syns_list]
+
+		q2_syns = request.form["q2_syns"]
+		q2_syns_list = ast.literal_eval(q2_syns)
+		q2_syns_list_stripped = [n.strip() for n in q2_syns_list]
+		
+		print q1_syns_list_stripped, "q1_syns!"
+		print q2_syns_list_stripped, "q2_syns!"
 
 
-		query = query_class_def.main(q1, q2, syn_dict_location)
+		query = query_class_def.main(q1, q2, syn_dict_location, q1_syns_list_stripped, q2_syns_list_stripped)
 
 		#makes dictionary of paper objects
 		paper_dict = main.main(query)

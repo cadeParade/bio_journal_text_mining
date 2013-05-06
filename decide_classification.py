@@ -45,14 +45,17 @@ class Sentence(object):
 
 	def make_tree(self, sentence):
 		"""Takes a sentence and creates a parse tree with pfp """
+		print sentence, "LALALALALALALALALALALALALALALALALA"
 		if do_something_with_the_database.check_for_tree(sentence):
-			print "entered get tree"
 			parsed_sentence = do_something_with_the_database.get_tree(sentence)
 			tree = nltk.ImmutableTree.parse(parsed_sentence)
 			return tree
 		else:
 			parsed_sentence = pfp.Parser().parse(sentence)
-			tree = nltk.ImmutableTree.parse(parsed_sentence)
+			if parsed_sentence == "":
+				tree = ""
+			else:
+				tree = nltk.ImmutableTree.parse(parsed_sentence)
 			return tree	
 
 
@@ -146,7 +149,7 @@ class Sentence(object):
 		#converts to ascii
 		if isinstance(sentence, unicode):
 			sentence = sentence.encode("ascii", "ignore")
-		
+
 		forbidden_chars = ["<", ">", "\xc2\xae", "()", "( )"]
 
 		for char in forbidden_chars:
@@ -265,8 +268,8 @@ def count_papers_of_each_type(sentence_list):
 	print count_neutral, "neutral"
 	print count_parallel, "parallel"
 	print count_abstract, "abstract"
-	class_dict = {"stim": {"count":count_stim, "text": "stimulatory"},
-				  "inhib":{"count":count_inhib, "text":"inhibitory"},
+	class_dict = {"inhib":{"count":count_inhib, "text":"inhibitory"},
+				  "stim": {"count":count_stim, "text": "stimulatory"},
 				  "neutral":{"count":count_neutral, "text": "neutral"},
 				  "parallel": {"count":count_parallel, "text":"parallel"},
 				  "abstract": {"count":count_abstract, "text":"abstract coocurrence only"}

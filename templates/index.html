@@ -10,45 +10,93 @@
 
 
 
-      <hr>
-       <div id = "results_container">
-      <div class= "box-1">    
+    <div id = "results_container">
       <div class="jumbotron">
       
         <h1>What are you looking for?</h1>
-        <!-- <p class="lead">type in your search terms just as soon as I get these forms made!</p> -->
 
         <form action="/" method="post">
           <fieldset>
             <legend>Enter search terms</legend>
-            <label>Entitiy 1: </label><input type = "text" id = "q1" name = "q1"><br><br>
-            <label>Entitiy 2: </label><input type = "text" id = "q2" name = "q2"><br><br>
-            <input id = "js_listen" type="submit" class = "btn btn-large btn-success" value="DECIDE RELATIONSHIP!">
+            <label>Entity 1: </label><input type = "text" id = "q1" name = "q1"><br><br>
+            <label>Entity 2: </label><input type = "text" id = "q2" name = "q2"><br><br>
+          <!--   <input id="get_syns" type = "submit" class="btn btn-large" value = "GET  SYNONYMS!"><br><br>-->
+            <input id = "get_results" type="submit" class = "btn btn-large btn-success" value="DECIDE RELATIONSHIP!">
+          <br>
+          <div id="synonyms"></div>
           </fieldset>
-        </form>
-      </div>
+          </form>
+
+          <!-- the below div is actually for loading but when I change the name it breaks? -->
+
+       </div>
      </div>
-     <div id = "syns"></div>
-      <hr>
-    </div>
+    
+      
+     </div>
+    
     <script>
-    $("#js_listen").on("click", function(event){
-      event.preventDefault();
-      var theform = {
-        q1: $("#q1").val(),
-        q2: $("#q2").val()
+
+       //Displays synonyms when get syns button is clicked
+      $("#get_syns").on("click", function(event){
+        event.preventDefault();
+        var theform = {
+          q1: $("#q1").val(),
+          q2: $("#q2").val()
+        }
+        $.ajax({
+            type: "POST",
+            url: "/get_syns",
+            data: theform,
+            success: displaySyns
+          });
+      });
+      function displaySyns(html){
+        $("#synonyms").html(html)
       }
-      $.ajax({
-          type: "POST",
-          url: "/",
-          data: theform,
-          success: displayResults
+
+
+      //Delays loading of new screen until processing is done
+      $("#get_results").on("click", function(event){
+        event.preventDefault();
+        // var checked_list = $("input:checked").val()
+        // console.log(checked_list)
+
+        var q1_syns = new Array();
+        $('#syn1_float_left input:checked').each(function() {
+            q1_syns.push($(this).attr('value'));
         });
-    });
-    function displayResults(html){
-      $("#results_container").html(html)
-    }
-    // </script>
+        var q1_string = JSON.stringify(q1_syns);
+        console.log(q1_string)
+
+        var q2_syns = new Array();
+        $('#syn2_float_right input:checked').each(function() {
+            q2_syns.push($(this).attr('value'));
+        });
+        var q2_string = JSON.stringify(q2_syns);
+        console.log(q2_string)
+
+        $("#synonyms").html("<div id='whiteout'><br><br><p class='lead'>Finding and classifying results</p><img src='/static/img/ajax-loader_blue.gif'></div>")
+
+
+        var theform = {
+          q1: $("#q1").val(),
+          q2: $("#q2").val(),
+          q1_syns: q1_string,
+          q2_syns: q2_string
+        }
+        console.log(theform)
+        $.ajax({
+            type: "POST",
+            url: "/",
+            data: theform,
+            success: displayResults
+          });
+      });
+      function displayResults(html){
+        $("#results_container").html(html)
+      }
+    </script>
 
 
 

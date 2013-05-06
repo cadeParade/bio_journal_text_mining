@@ -51,7 +51,8 @@ def check_for_tree(sentence):
 	tree_exists = papersdb.session.query(papersdb.Sentences) \
 								  .filter_by(sentence=sentence) \
 								  .first()
-	if tree_exists:
+
+	if tree_exists and tree_exists.parsed_sentence:
 		return True
 	else:
 		return False
@@ -82,7 +83,8 @@ def add_new_paper(paper_dict):
 			#populates list only at indexes where trees exist
 			if paper.classified_sentences:
 				for local_sentence in paper.classified_sentences:
-					tree_list[local_sentence.order_in_abstract] = local_sentence.tree._pprint_flat(nodesep='', parens='()', quotes=False)
+					if local_sentence.tree != "":
+						tree_list[local_sentence.order_in_abstract] = local_sentence.tree._pprint_flat(nodesep='', parens='()', quotes=False)
 
 			
 			for i, sentence in enumerate(paper.all_sentences):
