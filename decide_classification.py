@@ -56,7 +56,17 @@ class Sentence(object):
 				tree = ""
 			else:
 				tree = nltk.ImmutableTree.parse(parsed_sentence)
-			return tree	
+			return tree
+
+
+	def find_syns(self, thing_to_search_in, syn_list):
+		for word in syn_list:
+			if word in thing_to_search_in:
+				return True
+		for word in syn_list:
+			if word in thing_to_search_in:
+				return True
+		return False	
 
 
 	def traverse(self, t, query):
@@ -69,12 +79,14 @@ class Sentence(object):
 		try:
 			t.node
 		except AttributeError:
-			if query.q1 in t:
+			if query.q1 in t or \
+			   self.find_syns(t, query.q1_syns_checked):
 				self.pos_list.append(t)
 				# adds index of this DAT to q1 index list
 				pos_length = len(self.pos_list)
 				self.q1_indexes.append(pos_length-1)
-			elif query.q2 in t:
+			elif query.q2 in t or \
+			     self.find_syns(t, query.q1_syns_checked):
 				self.pos_list.append(t)
 				pos_length = len(self.pos_list)
 				self.q2_indexes.append(pos_length-1)
@@ -243,6 +255,7 @@ def make_sentence_objects(list_of_sentences, query):
 		print sentence_obj.parallel, "parallel class"
 		print sentence_obj.abstract_coocurrence_only, "coocurrence only class" 
 		print sentence_obj.overall_classification, "OVERAAAAAAAAAAAAAAAAAAAAAAAAALLLLLLLLLLLLLLLLLLLLLL"
+		print sentence_obj.general_classification
 		
 	return sentence_list
 
@@ -252,7 +265,13 @@ def count_papers_of_each_type(sentence_list):
 	count_neutral = 0
 	count_parallel = 0
 	count_abstract = 0
+	count_interactive = 0
+	count_non_interactive = 0
 	for sentence in sentence_list:
+		if sentence.general_classification == "Interactive":
+			count_interactive += 1
+		if sentence.general_classification == "Not Interactive":
+			count_non_interactive += 1
 		if sentence.stimulatory == True:
 			count_stim += 1
 		if sentence.inhibitory == True:
@@ -268,16 +287,30 @@ def count_papers_of_each_type(sentence_list):
 	print count_neutral, "neutral"
 	print count_parallel, "parallel"
 	print count_abstract, "abstract"
+	print count_interactive, "interactive"
+	print count_non_interactive, "non interactive"
 	class_dict = {"inhib":{"count":count_inhib, "text":"inhibitory"},
 				  "stim": {"count":count_stim, "text": "stimulatory"},
 				  "neutral":{"count":count_neutral, "text": "neutral"},
 				  "parallel": {"count":count_parallel, "text":"parallel"},
 				  "abstract": {"count":count_abstract, "text":"abstract coocurrence only"}
 				  }
+
 	max_class = max(class_dict.values(), key = lambda x: x["count"])
+	print max_class
+	
+	if (count_stim + count_inhib + count_neutral) > (count_abstract + count_parallel):
+		return ("interactive", max_class["text"])
+	else:
+		return ("not interactive", max_class["text"])
+
+	# gen_class_dict = { "interactive": {"count": count_interactive, "text": "interactive"},
+	# 			       "non_interactive": {"count": count_non_interactive, "text": "non-interactive"}
+	# 			  	 }
+	# max_gen_class = max(gen_class_dict.values(), key = lambda x: x["count"])
 				 
 
-	return max_class["text"]
+	# return max_gen_class["text"]
 
 
 def main(scored_sentences, query):

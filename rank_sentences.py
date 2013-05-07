@@ -3,6 +3,28 @@ from nltk.tag import pos_tag
 import nltk
 import make_list_of_words
 
+
+def find_query_in_sentence(sentence, query_str, syns_list):
+	if query_str in sentence:
+		return True
+	else:
+		if syns_list:
+			for syn in syns_list:
+				if syn in sentence:
+					return True
+		else:
+			return False
+
+
+def find_syns(first_word, query):
+	for word in query.q1_syns_checked:
+		if word == first_word:
+			return True
+	for word in query.q2_syns_checked:
+		if word == first_word:
+			return True
+	return False		
+
 def rank_sentences(list_of_sentences, query, max_sents):
 	tokenizer = RegexpTokenizer("\s+", gaps = True)
 	list_of_scored_sentences = []
@@ -18,7 +40,10 @@ def rank_sentences(list_of_sentences, query, max_sents):
 		# ____________EDIT THIS WHEN SYNONYMS IMPLEMENTED ___________
 		#
 		#
-		if tokenized_sentence[0] == query.q1 or tokenized_sentence[0] == query.q2:
+		if tokenized_sentence[0] == query.q1 or \
+		   tokenized_sentence[0] == query.q2 or \
+		   find_syns(tokenized_sentence[0], query):
+		# if tokenized_sentence[0] == find_syns(tokeni) or tokenized_sentence[0] == query.q2:
 		# if tokenized_sentence[0] == any(syn in query.q1_syns for syn in tokenized_sentence ) \
 		#    or tokenized_sentence[0] == any(syn in query.q2_syns for syn in tokenized_sentence ):
 		 	if pos_sentence[1][0] == "V":

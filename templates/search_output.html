@@ -1,13 +1,17 @@
 
       
+      {% if display_items %}
       <div class="jumbotron">
         <p><h3>This program thinks that</h3>
         <!-- <p><span class="lead">This program thinks that</span> -->
         <h2 class = "inline" id="q1">{{ q1 }}</h2><br>
         <span class="lead">and</span><br>
         <h2 class = "inline" id="q2">{{ q2 }}</h2><br>
-        <span class="lead">have a</span> <br>
-        <h2 class="inline">{{ overall_classification }}</h2> <br>
+        <span class="lead">are</span> <br>
+        <h2 class="inline">{{ general_classification }}.</h2> <br><br>
+        <!-- <span class="lead">relationship.</span> -->
+        <span class="lead">It suspects they have a</span><br>
+        <h2>{{ specific_classification }}</h2>
         <span class="lead">relationship.</span></p>
         
        
@@ -28,13 +32,37 @@
            </ul>
           {% endfor %}
         </ul>
-
-
+      </div>
+      
+      {% else %}
+       <div class="jumbotron">
+        <p><h3>This program thinks that...</h3>
+        <!-- <p><span class="lead">This program thinks that</span> -->
+        <h2 class = "inline" id="q1">...well...</h2><br>
+        <span class="lead">it doesn't know</span><br>
+        <h2 class = "inline" id="q2">what it thinks.</h2><br>
+        <span class="lead">Sorry.</span> <br><br>
+        <span class="lead">It could either be it can't find papers with both of these terms or it's broken.</span></p>
+        
+       
       </div>
 
+      {% endif %}
       <hr>
 
+
 <script>
+  var js_q1_syns ={{ q1_syns|safe }}
+  var js_q2_syns ={{ q2_syns|safe }}
+
+  // var {{ q1_syns|safe }} = $("#test").text();
+  // console.log(syn_list);
+  for (var i = js_q1_syns.length - 1; i >= 0; i--) {
+    $("li").highlightq1(js_q1_syns[i]);
+  };
+  for (var i = js_q2_syns.length - 1; i >= 0; i--) {
+    $("li").highlightq2(js_q2_syns[i]);
+  };
   // highlights search terms
   $("li").highlightq1($("#q1").text());
   $("li").highlightq2($("#q2").text());

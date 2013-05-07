@@ -43,6 +43,11 @@ def make_fetch_url(base_url, fetch_get_abstracts_add, ids, max_num_articles_to_g
 		print full_url
 		return full_url
 	else:
+		max_papers = "&retmax=%d" % max_num_articles_to_get
+		fetch_id_string = ",".join(ids["papers_to_fetch"])
+		fetch_url_add = "efetch.fcgi?db=pubmed&id=%s" % fetch_id_string
+		full_url = base_url + fetch_url_add + fetch_get_abstracts_add + max_papers
+		print full_url
 		return None
 
 def get_info_from_fetch_xml(xml, ids):
@@ -88,7 +93,9 @@ def get_relevant_data(query, max_num_articles_to_get):
 	fetch_get_abstracts_add = "&rettype=abstract"
 	#url = "http://eutils.ncbi.nlm.nih.gov/entrez/eutils/esearch.fcgi?db=pubmed&term=science[journal]+AND+breast+cancer+AND+2012[pdat]"
 
-	search_url = make_search_url(base_url, query, max_num_articles_to_get)
+	search_url = make_search_url(base_url, 
+							     query, 
+							     max_num_articles_to_get)
 	print search_url
 	#default return length is 20 docs
 	id_xml = get_xml(search_url)
@@ -96,14 +103,19 @@ def get_relevant_data(query, max_num_articles_to_get):
 
 	fetched_dict_of_info = {}
 	if stored_and_not_stored_ids["papers_to_fetch"]:
-		fetch_url = make_fetch_url(base_url, fetch_get_abstracts_add, stored_and_not_stored_ids, max_num_articles_to_get)
+		fetch_url = make_fetch_url(base_url, 
+			                       fetch_get_abstracts_add, 
+			                       stored_and_not_stored_ids, 
+			                       max_num_articles_to_get)
 		docs_xml = get_xml(fetch_url)
 	
-		fetched_dict_of_info = get_info_from_fetch_xml(docs_xml, stored_and_not_stored_ids)
+		fetched_dict_of_info = get_info_from_fetch_xml(docs_xml, 
+													   stored_and_not_stored_ids)
 	#paper_dict = make_paper_objects(dict_of_info)
 
 	if fetched_dict_of_info:
-		return_dict = {"fetched_dict_of_info":fetched_dict_of_info, "existing_id_list": stored_and_not_stored_ids["existing_papers"]}
+		return_dict = {"fetched_dict_of_info":fetched_dict_of_info, 
+					   "existing_id_list": stored_and_not_stored_ids["existing_papers"]}
 		return return_dict
 	else:
 		return_dict = {"existing_id_list":stored_and_not_stored_ids["existing_papers"]}

@@ -1,6 +1,7 @@
 from flask import Flask, render_template, request, redirect, make_response 
 from jinja2 import Template
 import ast
+import json
 import main
 import query_class_def
 import get_info_from_xml
@@ -95,7 +96,7 @@ def index():
 														 max_num_sents_to_analyze)
 		#list of sentences with classification properties filled in
 		classified_sentence_list = decide_classification.main(scored_sentences, query)
-		# returns dict {"count": #, "text": "classification label"}
+		# returns tuple ("interactive or non interactive", "specific classif")
 		overall_classification = decide_classification.count_papers_of_each_type(classified_sentence_list)
 		#assigns classified sentences to paper object that they came from
 		main.assign_sentences_back_from_which_they_came(paper_dict, classified_sentence_list)
@@ -107,7 +108,10 @@ def index():
 
 
 		return render_template("search_output.html", q1 = q1, q2 = q2, 
-													 overall_classification = overall_classification,
+													 q1_syns = json.dumps(q1_syns_list_stripped),
+													 q2_syns = json.dumps(q2_syns_list_stripped),
+													 general_classification = overall_classification[0],
+													 specific_classification = overall_classification[1],
 													 display_items = display_items)
 
 # @app.route("/",  methods = ["GET", "POST"])

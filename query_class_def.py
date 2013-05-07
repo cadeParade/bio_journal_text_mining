@@ -50,6 +50,7 @@ class Query(object):
 		if syn_list:
 			string += "+OR+"
 			for i, syn in enumerate(syn_list):
+				syn = syn.replace(" ", "+")
 				if i < len(syn_list) - 1:
 					string += '"%s"[tiab]+OR+' % syn
 				else:

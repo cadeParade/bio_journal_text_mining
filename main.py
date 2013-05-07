@@ -44,21 +44,31 @@ class Paper(object):
 		self.all_sentences = sentence_list
 
 
+	def find_query_in_sentence(self, sentence, query_str, syns_list):
+		if sentence:
+			if query_str in sentence:
+				return True
+			else:
+				if syns_list:
+					for syn in syns_list:
+						if syn in sentence:
+							return True
+				else:
+					return False
+
+
 	def find_sentences_with_both_queries(self, sentence_list, query):
 		"""takes list of sentences, tests if both queries are in each 
 			sentence. If so, keeps, if not, adds to non-interactive list"""
 		coocurrence_list = []
 		non_interactive_list = []
 		for i, sentence in enumerate(sentence_list):
-			print sentence, "SENTENCEEEEEEEEEEE"
-			# if any(syn in query.q1_syns for word in sentence) and \
-			#    any(syn in query.q2_syns for word in sentence):
-			if query.q1 in sentence and query.q2 in sentence:
+			q1_or_syns_found = self.find_query_in_sentence(sentence, query.q1, query.q1_syns_checked)
+			q2_or_syns_found = self.find_query_in_sentence(sentence, query.q2, query.q2_syns_checked)
+			if q1_or_syns_found and q2_or_syns_found:
 				sentence_and_position = (sentence, i)
 				coocurrence_list.append(sentence_and_position)
-			# elif any(syn in query.q1_syns for word in sentence) or \
-			# 	 any(syn in query.q2_syns for word in sentence):
-			elif query.q1 in sentence or query.q2 in sentence:
+			elif q1_or_syns_found or q2_or_syns_found:
 				sentence_and_position = (sentence, i)
 				non_interactive_list.append(sentence_and_position)
 		self.non_interactive_sents = non_interactive_list
@@ -76,13 +86,13 @@ class Paper(object):
 		else:
 			self.word_tokenized = None
 
-	def convert_unicode_to_ascii(self,unicode_string):
-		""" pfp can't handle UNICODE even though it took
-			so long to install it because of something
-			related to UNICODE. I don't even think this 
-			is used in this class anymore. """ 
-		unicode_string = unicode_string.encode("ascii", "ignore")
-		return unicode_string
+	# def convert_unicode_to_ascii(self,unicode_string):
+	# 	""" pfp can't handle UNICODE even though it took
+	# 		so long to install it because of something
+	# 		related to UNICODE. I don't even think this 
+	# 		is used in this class anymore. """ 
+	# 	unicode_string = unicode_string.encode("ascii", "ignore")
+	# 	return unicode_string
 
 
 def make_paper_objects(dict_of_info):
@@ -129,7 +139,6 @@ def get_list_of_all_sentences(paper_dict, query):
 		if not paper_dict[key].all_sentences:
 			paper_dict[key].split_abstract_into_sentences(query)
 			paper_dict[key].word_tokenize()
-			print paper_dict[key].word_tokenized
 			coocurrence_list = paper_dict[key].find_sentences_with_both_queries(paper_dict[key].all_sentences, query)
 			sentence_list = paper_dict[key].make_sentence_id_tuples(coocurrence_list)
 			list_of_sentences.extend(sentence_list)
