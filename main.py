@@ -102,6 +102,8 @@ def make_paper_objects(dict_of_info):
 
 	if "existing_id_list" in dict_of_info: 
 		ids = dict_of_info["existing_id_list"]
+
+		print ids, "IDSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSSS"
 		for pubmed_id in ids:
 			local_paper = do_something_with_the_database.get_paper_info(pubmed_id)
 			paper = Paper()

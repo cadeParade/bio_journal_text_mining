@@ -1,0 +1,64 @@
+Nature open text mining interface - allows access to nature publications in OTMI file, which is an XML file with lots of different tags, so it is machine readable
+http://blogs.nature.com/nascent/2006/04/open_text_mining_interface_1.html
+http://www.nature.com/nature/journal/v440/n7083/otmi/otmi-nature04614.xml
+
+What can you mine from unstructured data:
+keywords, tags
+categories, taxonomical terms
+entities
+	names
+	patterns
+	biochemical entities
+genre
+sentiment
+
+
+
+NATURAL LANGUAGE PROCESSING WITH PYTHON BOOK
+http://nltk.org/book/
+
+
+Biocreative
+http://www.biocreative.org/
+is an international community-wide effort that evaluates text mining and information extraction systems applied to the biological domain 
+
+
+http://www.chilibot.net/
+Chilibot searches PubMed literature database (abstracts) about specific relationships between proteins, genes, or keywords. The results are returned as a graph (see examples). We support several different search methods.
+
+using temporal patterns in medical records to discern adverse drug events from indications
+http://www.ncbi.nlm.nih.gov/pubmed/22779050
+
+common crawl
+http://commoncrawl.org/
+tool for scraping? downloaded list of pubmed abstract locations
+
+download wikipedia
+http://dumps.wikimedia.org/
+
+stack overflow data dump
+http://www.clearbits.net/creators/146-stack-exchange-data-dump
+
+
+Interesting introduction slides:
+http://people.cs.aau.dk/~simas/dat5_08/presentations/textminingandsearch1.pdf
+
+
+
+How to Develop Language Annotations for Machine Learning Algorithms
+1 hour video
+http://oreillynet.com/pub/e/2361
+
+Text mining package in R
+http://cran.r-project.org/web/packages/tm/vignettes/tm.pdf
+
+text mining package in JAVA
+http://www.cs.waikato.ac.nz/ml/weka/
+cookbook for such
+http://www.esp.uem.es/jmgomez/tmweka/index.html
+
+
+QUestion:
+What small data set can I use?
+Can i use the "Bag of words" for something?
+If i start small, can I scale it up sometime or should i plan for big things in the beginning?

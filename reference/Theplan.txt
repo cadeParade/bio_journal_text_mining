@@ -1,0 +1,36 @@
+The plan
+
+limit search to papers with search terms in title or abstract (with "[tiab]")
+get synonyms of search queries out of database
+	construct search like
+	(term 1 synonym 1 [tiab] OR term1 synonym2[tiab] OR ...) AND (term2 synonym 1[tiab] OR term2 synonym 2 [tiab] OR ...)
+let user verify meaning of acronyms when used as query term
+	some sort of scanning the synonym database to see what the likely menaing is
+	throws out papers that ahve less than 30% of words in synonym phrase in abstract
+Allow user to put in "context keywords"
+Synopsis generation??
+	first 100 sentences that contain specific query term or its synonyms.
+	Highest ranked sentences favor short conclusive sentences
+	see paper for weighting scheme.
+	15 sentences with highest weight are displayed (processed?)
+NLP
+	on sentences with both search terms:
+	POS analysis
+		GENIA corpus +?
+	Shallow Parsing to identify verb phrases
+	classification of relationships
+		interactive vs non-interactive
+			interactive = presence of verb phrase between queries
+				EXCEPT parallel when queries in different clauses
+				no verb phrase but words specifying interaction
+				parallel when negative words in verb phrase
+		further classified on presence of other words
+		direction -see paper (passive voice)
+		cooccurence when not in same sentence
+Visualization, etc
+
+
+import pfp
+import nltk
+sp = pfp.Parser.parse(string)
+tree = nltk.ImmutableTree.parse(sp)

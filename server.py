@@ -7,7 +7,6 @@ import query_class_def
 import get_info_from_xml
 import rank_sentences
 import decide_classification
-import pusher
 import papersdb
 import do_something_with_the_database
 

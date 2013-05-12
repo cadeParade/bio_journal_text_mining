@@ -1,0 +1,17 @@
+Flask==0.9
+Flask-SQLAlchemy==0.16
+Jinja2==2.6
+PyRSS2Gen==1.1
+PyYAML==3.10
+SQLAlchemy==0.8.1
+Werkzeug==0.8.3
+cssselect==0.8
+distribute==0.6.34
+gunicorn==0.17.4
+lxml==3.2.1
+nltk==2.0.4
+numpy==1.7.1
+pfp==0.0.5
+psycopg2==2.5
+pyquery==1.2.4
+wsgiref==0.1.2
