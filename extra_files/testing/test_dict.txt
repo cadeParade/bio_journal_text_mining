@@ -1,3 +1,0 @@
-RPS11|AtCg00750;Chloroplast 30S ribosomal protein S11;CsCp075;Grc000081;9311100, Nip102, PA102;PSC0809;PS158;ENSANGG00000009494;40S ribosomal protein S11;QnpA 10190;QnpA10190;CG8857;S11;anon MMS23;anonMMS23;anon fast evolving 1D2;anonfastevolving1D2;clone 23;fa91c09;fb34b11;MGC64491;cRPS11;rpsK;DDB0230027;ribosomal protein S11;
-PNMA1|MA1;Paraneoplastic antigen Ma1;Neuron and testis specific protein 1;Neuron and testisspecific protein 1;37 kDa neuronal protein;Paraneoplastic antigen Ma1 homolog;MGC144789;MGC144790;
-ZFP318|D530032D06Rik;TZF;
