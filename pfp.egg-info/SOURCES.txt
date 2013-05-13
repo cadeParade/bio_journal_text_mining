@@ -1,8 +1,0 @@
-pfp.egg-info/PKG-INFO
-pfp.egg-info/SOURCES.txt
-pfp.egg-info/dependency_links.txt
-pfp.egg-info/not-zip-safe
-pfp.egg-info/top_level.txt
-src/pfp/config.cpp
-src/pfp/tokenizer.yy.cpp
-src/pypfp/pypfp.cpp
