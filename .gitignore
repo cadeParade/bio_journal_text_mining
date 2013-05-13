@@ -1,3 +1,5 @@
 venv
 *.pyc
 extra_files/
+pfp.egg-info/
+

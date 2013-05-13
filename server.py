@@ -10,9 +10,6 @@ import decide_classification
 import papersdb
 import do_something_with_the_database
 
-# p = pusher.Pusher(app_id='42611', key='9289758c45b094b1f969', secret='fb86f119bee7300dcf48')
-# p['my-channel'].trigger('my-event',{'message': 'hello world'})
-
 
 app = Flask(__name__)
 
@@ -55,6 +52,10 @@ def get_syns():
 												q2_syns = query.q2_syns,
 												q1 = q1,
 												q2 = q2)
+
+@app.route("/about")
+def about():
+	return render_template("about.html")
 
 @app.route("/",  methods = ["GET", "POST"])
 def index():

@@ -58,12 +58,7 @@
       <script src="../assets/js/html5shiv.js"></script>
     <![endif]-->
 
-    <!-- Fav and touch icons -->
-    <link rel="apple-touch-icon-precomposed" sizes="144x144" href="../assets/ico/apple-touch-icon-144-precomposed.png">
-    <link rel="apple-touch-icon-precomposed" sizes="114x114" href="../assets/ico/apple-touch-icon-114-precomposed.png">
-      <link rel="apple-touch-icon-precomposed" sizes="72x72" href="../assets/ico/apple-touch-icon-72-precomposed.png">
-                    <link rel="apple-touch-icon-precomposed" href="../assets/ico/apple-touch-icon-57-precomposed.png">
-                                   <link rel="shortcut icon" href="../assets/ico/favicon.png">
+  
     <style>
     {% block style %}
     {% endblock %}
@@ -75,7 +70,9 @@
 
       <div class="masthead">
         <ul class="nav nav-pills pull-right">
-          <li class="active"><a href="/">Home</a></li>
+          <li {% if request.path =="/" %}class="active"{% endif %}><a href="/">Home</a></li>
+          <li {% if request.path =="/about" %} class="active"{% endif %}><a href="/about">About</a></li>
+
         </ul>
         <h3 class="muted">Pubmed Abstract Relationship Finder</h3>
       </div>

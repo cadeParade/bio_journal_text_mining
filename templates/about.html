@@ -1,0 +1,47 @@
+{% extends "layout.html" %}
+
+
+
+{% block style %}
+{% endblock %}
+
+
+{% block body %}
+<br><br><br>
+<p>
+	 This app takes two biological search terms, like a gene name or a disease, and performs <a href="http://en.wikipedia.org/wiki/Natural_language_processing">natural language processing (NLP)</a> on journal paper abstracts to figure out whether they are interactive.
+</p>
+<p>
+	It is based on part of the paper <a href= "http://www.biomedcentral.com/content/pdf/1471-2105-5-147.pdf"><b>"Content-rich biological network constructed by mining PubMed abstracts"</b></a> by Hao Chen and Burt M Sharp in BMC Bioinformatics Journal, 08, October 2004.	
+</p>
+<p>
+	<span class="lead">A short explanation of how it works:</span>
+</p>
+<p>
+	The app takes two search terms and searches <a href="http://www.ncbi.nlm.nih.gov/pubmed">PubMed</a>, a national database of research papers, for articles that have the search terms. If any synonyms from the synonym finder are checked, it will also search for those. 
+</p>
+<p>
+	Pubmed returns a list of paper ids which are checked against the papers stored in my database. If the papers are in the database, the preprocessed sentences are displayed. If not, the papers' abstracts go through the following processing.
+</p>
+<p>
+	Each sentence that contains both search terms or its synonyms are separated into a list. Then, each sentence is assigned a score, which selects sentences best suited for NLP. Ranking points are added when one of: (1) the search term or synonym begins a sentence and is followed by a verb, (2) there is a conclusive word in the sentence, or (3) the sentence is short.
+	The top 20 sentences from this ranking continue to the next step.
+</p>
+<p>
+	Now, each sentence goes through shallow parsing where the sentence is parsed into a <a href="../static/img/tree.jpg">tree structure</a>. Based on this, the program decides whether there is a verb phrase between the queries, whether the queries are in separate <a href="http://en.wikipedia.org/wiki/Clause">clauses</a> and whether there are any words that imply interaction. A tally of sentences with each classification is taken and the highest classification is displayed (interactive or non-interactive) 
+</p>
+<p>
+	The app uses the <a href="http://nltk.org/book/">NLTK library</a> for the part of speech processing and parse tree traversal. It uses the <a href="https://github.com/wavii/pfp">pfp library</a> for the actual sentence parsing.
+</p>
+
+<p>
+	I made this app in Spring 2013 as the final project of my <a href="http://www.hackbrightacademy.com">Hackbright Academy</a> fellowship. It was made in 4 weeks, 6 weeks after I started programming.
+</p>
+
+<p>
+	&mdash; <a href="mailto:lrc3233@gmail.com">Lindsay Cade</a>
+</p>
+
+
+
+{% endblock %}
